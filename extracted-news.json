@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "headline": "Alabama Senator Proposes Bill to Ban Critical Race Theory",
+    "source": "example.com",
+    "publishedAt": "3/28/2025",
+    "category": "Systemic Racism",
+    "url": "https://www.example.com/alabama-crt-ban"
+  },
+  {
+    "id": 2,
+    "headline": "GOP Lawmakers Push Back Against Corporate DEI Programs",
+    "source": "example.com",
+    "publishedAt": "3/28/2025",
+    "category": "MAGA",
+    "url": "https://www.example.com/dei-backlash"
+  },
+  {
+    "id": 3,
+    "headline": "Study Shows Persistent Health Disparities in Minority Communities",
+    "source": "example.com",
+    "publishedAt": "3/28/2025",
+    "category": "Systemic Racism",
+    "url": "https://www.example.com/health-disparities-study"
+  },
+  {
+    "id": 4,
+    "headline": "White Nationalist Content Increasing on Social Media Platforms",
+    "source": "example.com",
+    "publishedAt": "3/28/2025",
+    "category": "White Supremacy",
+    "url": "https://www.example.com/voter-id-impact-study"
+  },
+  {
+    "id": 5,
+    "headline": "Voter ID Laws Disproportionately Impact Minority Voters, New Analysis Shows",
+    "source": "example.com",
+    "publishedAt": "3/28/2025",
+    "category": "Systemic Racism",
+    "url": "https://www.example.com/white-nationalist-content-report"
+  }
+]

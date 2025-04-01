@@ -1,196 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { router } from 'expo-router';
-import { fetchTrendingNews } from '@/services/NewsService';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Clock, TrendingUp, ExternalLink } from 'lucide-react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, ImageBackground } from 'react-native';
+import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function TrendingScreen() {
-  const [filter, setFilter] = useState('');
-  
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['trendingNews'],
-    queryFn: fetchTrendingNews,
-  });
+export default function HomeScreen() {
+  const router = useRouter();
 
-  const filteredNews = data?.filter(item => 
-    item.title.toLowerCase().includes(filter.toLowerCase())
-  ) || [];
+  useEffect(() => {
+    // Redirect to scholar-trends after 2 seconds
+    const timer = setTimeout(() => {
+      router.replace('/(tabs)/scholar-trends');
+    }, 2000);
 
-  const renderNewsItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.newsCard}
-      onPress={() => router.push({
-        pathname: '/news-detail',
-        params: { 
-          id: item.id,
-          title: item.title,
-          source: item.source,
-          publishedAt: item.publishedAt,
-          url: item.url,
-          content: item.content
-        }
-      })}
-    >
-      <View style={styles.newsHeader}>
-        <Text style={styles.newsTitle}>{item.title}</Text>
-        <View style={styles.trendingContainer}>
-          <TrendingUp size={16} color="#FF4500" />
-          <Text style={styles.trendingText}>{item.rank}</Text>
-        </View>
-      </View>
-      
-      <View style={styles.newsFooter}>
-        <View style={styles.sourceContainer}>
-          <Text style={styles.sourceText}>{item.source}</Text>
-        </View>
-        <View style={styles.timeContainer}>
-          <Clock size={14} color="#666" />
-          <Text style={styles.timeText}>{item.publishedAt}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
-  if (error) {
-    return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Error loading trending news</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
-          <Text style={styles.retryText}>Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={filteredNews}
-        renderItem={renderNewsItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-        }
-        ListEmptyComponent={
-          isLoading ? (
-            <View style={styles.centerContainer}>
-              <ActivityIndicator size="large" color="#0000ff" />
-              <Text style={styles.loadingText}>Loading trending news...</Text>
-            </View>
-          ) : (
-            <View style={styles.centerContainer}>
-              <Text style={styles.emptyText}>No trending news found</Text>
-            </View>
-          )
-        }
-      />
-    </SafeAreaView>
+    <ImageBackground
+      source={require('@/assets/theme.png')}
+      style={styles.backgroundImage}
+    >
+      <LinearGradient
+        colors={['rgba(13, 27, 42, 0.8)', 'rgba(27, 38, 59, 0.8)', 'rgba(65, 90, 119, 0.8)']}
+        style={styles.container}
+      >
+        <View style={styles.logoContainer}>
+          <View style={styles.logoPlaceholder}>
+            <Text style={styles.logoText}>SLIM</Text>
+          </View>
+          <Text style={styles.title}>Scholar Insights</Text>
+          <Text style={styles.subtitle}>Powered by RAG Technology</Text>
+        </View>
+        
+        <ActivityIndicator size="large" color="#e0e1dd" />
+        <Text style={styles.loadingText}>Loading scholar analysis...</Text>
+        
+        <View style={styles.decorCircle1} />
+        <View style={styles.decorCircle2} />
+      </LinearGradient>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  listContainer: {
-    padding: 16,
-  },
-  newsCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  newsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  newsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    flex: 1,
-    marginRight: 8,
-  },
-  trendingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF0EC',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  trendingText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#FF4500',
-    marginLeft: 4,
-  },
-  newsFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  sourceContainer: {
-    backgroundColor: '#E8F0FE',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  sourceText: {
-    fontSize: 12,
-    color: '#1A73E8',
-    fontWeight: '500',
-  },
-  timeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  timeText: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 4,
-  },
-  centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    minHeight: 300,
+    padding: 16,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  logoPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoText: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#e0e1dd',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#e0e1dd',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#bdc6d1',
+    textAlign: 'center',
+    marginTop: 8,
   },
   loadingText: {
     marginTop: 16,
+    color: '#bdc6d1',
     fontSize: 16,
-    color: '#666',
   },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
+  decorCircle1: {
+    position: 'absolute',
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    top: -80,
+    right: -80,
+    backgroundColor: 'rgba(65, 90, 119, 0.15)',
+    zIndex: -1,
   },
-  errorText: {
-    fontSize: 16,
-    color: '#d32f2f',
-    marginBottom: 16,
-  },
-  retryButton: {
-    backgroundColor: '#2196f3',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#fff',
-    fontWeight: '600',
+  decorCircle2: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    bottom: -40,
+    left: -40,
+    backgroundColor: 'rgba(27, 38, 59, 0.2)',
+    zIndex: -1,
   },
 });

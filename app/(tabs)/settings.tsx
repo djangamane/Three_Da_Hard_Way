@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView, Alert, Image, Linking, Platform, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Bell, Filter, Info, Shield, Trash } from 'lucide-react-native';
-import { Platform } from 'react-native';
+import { Bell, Filter, Info, Shield, Trash, Tool } from 'lucide-react-native';
 import * as Notifications from 'expo-notifications';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Link, useRouter } from 'expo-router';
 
 export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [breakingNewsEnabled, setBreakingNewsEnabled] = useState(true);
   const [scholarUpdatesEnabled, setScholarUpdatesEnabled] = useState(true);
   const [filterKeywords, setFilterKeywords] = useState(['racism', 'MAGA', 'politics', 'economy']);
+  const router = useRouter();
 
   // Load settings from AsyncStorage on component mount
   useEffect(() => {
@@ -109,183 +111,400 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Bell size={20} color="#6200ee" />
-            <Text style={styles.sectionTitle}>Notifications</Text>
+    <ImageBackground
+      source={require('@/assets/theme.png')}
+      style={styles.backgroundImage}
+    >
+      <LinearGradient
+        colors={['rgba(13, 27, 42, 0.8)', 'rgba(27, 38, 59, 0.8)', 'rgba(65, 90, 119, 0.8)']}
+        style={styles.container}
+      >
+        <ScrollView style={styles.scrollContainer}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>SLIM Settings</Text>
+            <Text style={styles.headerSubtitle}>Scholar Lens Insights Module</Text>
           </View>
-          
-          <View style={styles.settingItem}>
-            <Text style={styles.settingLabel}>Enable Notifications</Text>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={toggleNotifications}
-              trackColor={{ false: '#d1d1d1', true: '#b39ddb' }}
-              thumbColor={notificationsEnabled ? '#6200ee' : '#f4f3f4'}
-            />
+
+          {/* Theme Image with Border */}
+          <View style={styles.themeImageContainer}>
+            <View style={styles.themeImageBorder}>
+              <Image 
+                source={require('@/assets/images/splashscreen_logo.png')} 
+                style={styles.themeImage}
+                resizeMode="contain"
+              />
+            </View>
           </View>
-          
-          <View style={[styles.settingItem, !notificationsEnabled && styles.disabledSetting]}>
-            <Text style={[styles.settingLabel, !notificationsEnabled && styles.disabledText]}>
-              Breaking News Alerts
+
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Scholar Insights System</Text>
+            <Text style={styles.sectionDescription}>
+              SLIM uses advanced Retrieval Augmented Generation (RAG) to provide authentic scholar perspectives on current events.
             </Text>
-            <Switch
-              value={breakingNewsEnabled}
-              onValueChange={setBreakingNewsEnabled}
-              disabled={!notificationsEnabled}
-              trackColor={{ false: '#d1d1d1', true: '#b39ddb' }}
-              thumbColor={breakingNewsEnabled ? '#6200ee' : '#f4f3f4'}
-            />
+
+            <View style={styles.infoCard}>
+              <Text style={styles.cardTitle}>Current Implementation</Text>
+              <View style={styles.cardDivider} />
+              <Text style={styles.cardText}>
+                • Hybrid system combining RAG with OpenAI{'\n'}
+                • Core excerpts from scholar works{'\n'}
+                • Authentically crafted scholar perspectives{'\n'}
+                • Semantic search for relevant context
+              </Text>
+            </View>
+
+            <View style={styles.infoCard}>
+              <Text style={styles.cardTitle}>Development Roadmap</Text>
+              <View style={styles.cardDivider} />
+              <Text style={styles.cardText}>
+                • Complete scholar text integration{'\n'}
+                • Enhanced retrieval accuracy{'\n'}
+                • Expanded scholar database{'\n'}
+                • More sophisticated analysis patterns
+              </Text>
+            </View>
+
+            <TouchableOpacity 
+              style={styles.learnMoreButton}
+              onPress={() => Linking.openURL('https://en.wikipedia.org/wiki/Retrieval-augmented_generation')}
+            >
+              <Text style={styles.learnMoreText}>Learn More About RAG</Text>
+            </TouchableOpacity>
           </View>
-          
-          <View style={[styles.settingItem, !notificationsEnabled && styles.disabledSetting]}>
-            <Text style={[styles.settingLabel, !notificationsEnabled && styles.disabledText]}>
-              Scholar Analysis Updates
+
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>About The Scholars</Text>
+            <Text style={styles.sectionDescription}>
+              SLIM features insightful analysis from these remarkable scholars:
             </Text>
-            <Switch
-              value={scholarUpdatesEnabled}
-              onValueChange={setScholarUpdatesEnabled}
-              disabled={!notificationsEnabled}
-              trackColor={{ false: '#d1d1d1', true: '#b39ddb' }}
-              thumbColor={scholarUpdatesEnabled ? '#6200ee' : '#f4f3f4'}
-            />
-          </View>
-        </View>
-        
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Filter size={20} color="#6200ee" />
-            <Text style={styles.sectionTitle}>News Filters</Text>
-          </View>
-          
-          <Text style={styles.filterDescription}>
-            You will receive notifications for news related to these topics:
-          </Text>
-          
-          <View style={styles.filterTags}>
-            {filterKeywords.map((keyword, index) => (
-              <View key={index} style={styles.filterTag}>
-                <Text style={styles.filterTagText}>{keyword}</Text>
+
+            <View style={styles.scholarCard}>
+              <Image 
+                source={require('@/assets/images/fcwelsing.png')} 
+                style={styles.scholarImage}
+              />
+              <View style={styles.scholarInfo}>
+                <Text style={styles.scholarName}>Dr. Frances Cress Welsing</Text>
+                <Text style={styles.scholarDesc}>
+                  Psychiatrist and author of "The Isis Papers"; developed the Color-Confrontation theory examining white supremacy psychology.
+                </Text>
               </View>
-            ))}
+            </View>
+
+            <View style={styles.scholarCard}>
+              <Image 
+                source={require('@/assets/images/dramos-Photoroom.png')} 
+                style={styles.scholarImage}
+              />
+              <View style={styles.scholarInfo}>
+                <Text style={styles.scholarName}>Dr. Amos Wilson</Text>
+                <Text style={styles.scholarDesc}>
+                  Theoretical psychologist and author of "Blueprint for Black Power"; known for analysis of power dynamics and economics.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.scholarCard}>
+              <Image 
+                source={require('@/assets/images/ishakamusa-Photoroom.png')} 
+                style={styles.scholarImage}
+              />
+              <View style={styles.scholarInfo}>
+                <Text style={styles.scholarName}>Dr. Ishakamusa Barashango</Text>
+                <Text style={styles.scholarDesc}>
+                  Historian, lecturer and author focused on African spiritual systems and historical revisionism.
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
+
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Admin Tools</Text>
+            <Text style={styles.sectionDescription}>
+              Access administrative tools for updating news content and managing the app.
+            </Text>
+            
+            <Link href="admin-tools" asChild>
+              <TouchableOpacity style={styles.adminButton}>
+                <Tool size={20} color="#e0e1dd" style={styles.adminButtonIcon} />
+                <Text style={styles.adminButtonText}>Update News from Email</Text>
+              </TouchableOpacity>
+            </Link>
+            
+            <Text style={styles.adminDescription}>
+              Use the admin tools to manually update the news feed with your latest State of White Supremacy Alerts email content.
+            </Text>
+          </View>
+
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Data Management</Text>
+            
+            <View style={styles.optionItem}>
+              <TouchableOpacity 
+                style={styles.dangerButton}
+                onPress={clearAllData}
+              >
+                <Text style={styles.buttonText}>Clear All Data</Text>
+              </TouchableOpacity>
+              <Text style={styles.optionDescription}>
+                This will clear all saved data, including settings and cached news
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.footerContainer}>
+            <Text style={styles.versionText}>Version 1.0.0</Text>
+            <Text style={styles.copyrightText}>© 2024 SLIM Analysis</Text>
+          </View>
+        </ScrollView>
         
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Info size={20} color="#6200ee" />
-            <Text style={styles.sectionTitle}>About</Text>
-          </View>
-          
-          <Text style={styles.aboutText}>
-            Scholar Trends aggregates real-time trending news and provides AI-driven analysis from three renowned scholars: Dr. Frances Cress Welsing, Dr. Amos Wilson, and Dr. Ishakamusa Barashango.
-          </Text>
-          
-          <Text style={styles.versionText}>Version 1.0.0</Text>
-        </View>
-        
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Shield size={20} color="#6200ee" />
-            <Text style={styles.sectionTitle}>Privacy & Data</Text>
-          </View>
-          
-          <TouchableOpacity style={styles.dangerButton} onPress={clearAllData}>
-            <Trash size={16} color="#fff" />
-            <Text style={styles.dangerButtonText}>Clear All Data</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        {/* Decorative elements */}
+        <View style={styles.decorCircle1} />
+        <View style={styles.decorCircle2} />
+        <View style={styles.decorLine1} />
+        <View style={styles.decorLine2} />
+      </LinearGradient>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
-  section: {
-    backgroundColor: '#fff',
-    marginVertical: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderRadius: 8,
-    marginHorizontal: 16,
+  scrollContainer: {
+    flex: 1,
+    padding: 16,
   },
-  sectionHeader: {
-    flexDirection: 'row',
+  headerContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 24,
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#E0E1DD',
+    textShadow: '1px 1px 5px rgba(0, 0, 0, 0.75)',
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#8D99AE',
+    marginTop: 4,
+  },
+  themeImageContainer: {
+    marginVertical: 24,
+    alignItems: 'center',
+  },
+  themeImageBorder: {
+    padding: 4,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(72, 110, 166, 0.5)',
+    backgroundColor: 'rgba(14, 17, 23, 0.7)',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)',
+    elevation: 5,
+  },
+  themeImage: {
+    width: 320,
+    height: 200,
+    borderRadius: 12,
+  },
+  sectionContainer: {
+    backgroundColor: 'rgba(14, 17, 23, 0.7)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
-    color: '#6200ee',
-  },
-  settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: '#333',
-  },
-  disabledSetting: {
-    opacity: 0.5,
-  },
-  disabledText: {
-    color: '#999',
-  },
-  filterDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-  },
-  filterTags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  filterTag: {
-    backgroundColor: '#e8f0fe',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    marginRight: 8,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#E0E1DD',
     marginBottom: 8,
   },
-  filterTagText: {
-    color: '#1a73e8',
-    fontWeight: '500',
-  },
-  aboutText: {
+  sectionDescription: {
     fontSize: 14,
-    color: '#666',
+    color: '#8D99AE',
+    marginBottom: 16,
     lineHeight: 20,
+  },
+  infoCard: {
+    backgroundColor: 'rgba(35, 41, 54, 0.95)',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(72, 110, 166, 0.3)',
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#E0E1DD',
+    marginBottom: 8,
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     marginBottom: 12,
+  },
+  cardText: {
+    fontSize: 14,
+    color: '#D1D5DB',
+    lineHeight: 22,
+  },
+  learnMoreButton: {
+    backgroundColor: 'rgba(65, 90, 119, 0.8)',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  learnMoreText: {
+    color: '#E0E1DD',
+    fontWeight: 'bold',
+  },
+  scholarCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(35, 41, 54, 0.95)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(72, 110, 166, 0.3)',
+  },
+  scholarImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  scholarInfo: {
+    flex: 1,
+  },
+  scholarName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#E0E1DD',
+    marginBottom: 4,
+  },
+  scholarDesc: {
+    fontSize: 14,
+    color: '#D1D5DB',
+    lineHeight: 20,
+  },
+  footerContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+    paddingTop: 16,
   },
   versionText: {
     fontSize: 14,
-    color: '#999',
+    color: '#8D99AE',
   },
-  dangerButton: {
-    backgroundColor: '#d32f2f',
+  copyrightText: {
+    fontSize: 12,
+    color: '#8D99AE',
+    marginTop: 4,
+  },
+  decorCircle1: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    top: -50,
+    right: -50,
+    backgroundColor: 'rgba(65, 90, 119, 0.2)',
+    zIndex: -1,
+  },
+  decorCircle2: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    bottom: -30,
+    left: -30,
+    backgroundColor: 'rgba(27, 38, 59, 0.3)',
+    zIndex: -1,
+  },
+  decorLine1: {
+    position: 'absolute',
+    width: 3,
+    height: '40%',
+    top: '10%',
+    right: 40,
+    backgroundColor: 'rgba(200, 210, 225, 0.08)',
+    zIndex: -1,
+  },
+  decorLine2: {
+    position: 'absolute',
+    width: 3,
+    height: '30%',
+    bottom: '15%',
+    left: 60,
+    backgroundColor: 'rgba(200, 210, 225, 0.08)',
+    zIndex: -1,
+  },
+  adminButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
+    backgroundColor: 'rgba(60, 80, 120, 0.3)',
     borderRadius: 8,
+    padding: 16,
+    marginVertical: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  dangerButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    marginLeft: 8,
+  adminButtonIcon: {
+    marginRight: 12,
+  },
+  adminButtonText: {
+    color: '#e0e1dd',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  adminDescription: {
+    color: '#bdc6d1',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  optionItem: {
+    marginBottom: 16,
+  },
+  button: {
+    backgroundColor: 'rgba(65, 90, 119, 0.8)',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#E0E1DD',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  optionDescription: {
+    color: '#8D99AE',
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 4,
+  },
+  dangerButton: {
+    backgroundColor: 'rgba(119, 65, 65, 0.8)',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 });
